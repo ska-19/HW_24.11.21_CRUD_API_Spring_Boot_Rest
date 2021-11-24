@@ -41,37 +41,48 @@ curl -X GET http://localhost:8080/api/users/100 -H 'Content-Type: application/js
     }
 
     /*
-curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Kirill","password":"qwe","age": 17}'
+curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Kirill","password":"qwe","r_password":"qwe","age": 17}'
 curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Dima","password":"123","age": 11}'
 curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Kirill","password":"qqqq","age": 22}'
+curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"BR","password":"qwe","r_password":"BR","age": 2}'
 
  */
 
     @PostMapping("/users")
-    public User createUser(@RequestBody User user) {
-        if(!tutorialRepository.findByUsername(user.getUsername()).isEmpty()){
+    public User createUser(@RequestBody UserRP userRP) {
+        if(!tutorialRepository.findByUsername(userRP.getUsername()).isEmpty()){
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
         else {
-            return  tutorialRepository.save(new User(user.getUsername(),user.getPassword(), user.getAge()));
+            if(userRP.getPassword().equals(userRP.getR_password())) {
+                return tutorialRepository.save(new User(userRP.getUsername(), userRP.getPassword(), userRP.getAge()));
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
     /*
-   curl -X PUT http://localhost:8080/api/users/1 -H 'Content-Type: application/json' -d '{"username":"F","password":"ff","age": 30}'
-   curl -X PUT http://localhost:8080/api/users/100 -H 'Content-Type: application/json' -d '{"username":"F","password":"ff","age": 30}'
+   curl -X PUT http://localhost:8080/api/users/1 -H 'Content-Type: application/json' -d '{"username":"F","password":"ff","r_password":"ff","age": 30}'
+   curl -X PUT http://localhost:8080/api/users/1 -H 'Content-Type: application/json' -d '{"username":"BR","password":"ff","r_password":"BR","age": 12}'
 
 
     */
     @PutMapping("/users/{id}")
-    public User updateUser(@PathVariable("id") long id, @RequestBody User user) {
+    public User updateUser(@PathVariable("id") long id, @RequestBody UserRP userRP ) {
         Optional<User> tutorialData = tutorialRepository.findById(id);
         if (tutorialData.isPresent()) {
-            User _tutorial = tutorialData.get();
-            _tutorial.setUsername(user.getUsername());
-            _tutorial.setPassword(user.getPassword());
-            _tutorial.setAge(user.getAge());
-            return tutorialRepository.save(_tutorial);
+            if(userRP.getPassword().equals(userRP.getR_password())) {
+                User _tutorial = tutorialData.get();
+                _tutorial.setUsername(userRP.getUsername());
+                _tutorial.setPassword(userRP.getPassword());
+                _tutorial.setAge(userRP.getAge());
+                return tutorialRepository.save(_tutorial);
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
