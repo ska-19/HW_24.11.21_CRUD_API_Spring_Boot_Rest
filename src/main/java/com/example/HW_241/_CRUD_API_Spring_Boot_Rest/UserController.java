@@ -24,6 +24,10 @@ public class UserController {
     public List<User> getAllUsers() {
         return tutorialRepository.findAll();
     }
+    @GetMapping("/users/ageBetween/{age}")
+    public List<User> getAllUsers(@PathVariable("age") Integer age) {
+        return tutorialRepository.findByAgeBetween(age-5,age+5);
+    }
 /*
 curl -X GET http://localhost:8080/api/users/2 -H 'Content-Type: application/json'
 curl -X GET http://localhost:8080/api/users/1 -H 'Content-Type: application/json'

@@ -4,5 +4,6 @@ import java.util.List;
 public interface TutorialRepository extends JpaRepository<User, Long> {
     //List<User> findByPublished(boolean published);
     List<User> findByUsername(String username);
+    List<User> findByAgeBetween(Integer start,Integer finish);
 
 }

@@ -17,6 +17,7 @@ public class UserRP {
     public UserRP(String username, String password, Integer age) {
         this.username = username;
         this.password = password;
+        this.r_password = password;
         this.age = age;
     }
 
