@@ -45,10 +45,10 @@ curl -X GET http://localhost:8080/api/users/100 -H 'Content-Type: application/js
     }
 
     /*
-curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Kirill","password":"qwe","r_password":"qwe","age": 17}'
+curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Kirill","password":"qwe","repeatPassword":"qwe","age": 17}'
 curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Dima","password":"123","age": 11}'
 curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"Kirill","password":"qqqq","age": 22}'
-curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"BR","password":"qwe","r_password":"BR","age": 2}'
+curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"username":"BR","password":"qwe","repeatPassword":"BR","age": 2}'
 
  */
 
@@ -58,7 +58,7 @@ curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json'
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
         else {
-            if(userRP.getPassword().equals(userRP.getR_password())) {
+            if(userRP.getPassword().equals(userRP.getRepeatPassword())) {
                 return tutorialRepository.save(new User(userRP.getUsername(), userRP.getPassword(), userRP.getAge()));
             }
             else {
@@ -77,7 +77,7 @@ curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json'
     public User updateUser(@PathVariable("id") long id, @RequestBody UserRP userRP ) {
         Optional<User> tutorialData = tutorialRepository.findById(id);
         if (tutorialData.isPresent()) {
-            if(userRP.getPassword().equals(userRP.getR_password())) {
+            if(userRP.getPassword().equals(userRP.getRepeatPassword())) {
                 User _tutorial = tutorialData.get();
                 _tutorial.setUsername(userRP.getUsername());
                 _tutorial.setPassword(userRP.getPassword());
